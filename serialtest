@@ -1,0 +1,15 @@
+import serial
+from time import sleep
+
+COM_PORT = 'COM7'
+BAUD_RATES = 9600
+ser = serial.Serial(COM_PORT, BAUD_RATES)
+
+while True:
+	ser.write(b"on\n")
+	print('on')
+	sleep(0.5)
+	ser.write(b"off\n")
+	print('off')
+	sleep(0.5)
+
