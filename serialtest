@@ -1,7 +1,7 @@
 import serial
 from time import sleep
 
-COM_PORT = '/dev/ttyACM1'
+COM_PORT = '/dev/ttyACM'
 BAUD_RATES = 9600
 ser = serial.Serial(COM_PORT, BAUD_RATES)
 
