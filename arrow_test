@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import serial
 
-COM_PORT = '/dev/ttyACM0'
+COM_PORT = '/dev/ttyACM1'
 BAUD_RATES = 9600
 ser = serial.Serial(COM_PORT, BAUD_RATES)
 
