@@ -26,10 +26,10 @@ def getContours(img, imgcontours):
                         secmaximum = newapp[j]
                 if abs(maximum - secmaximum) < w1/4:
                     cv2.putText(imgcontours, "left", (x1+w1+10, y1+30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
-                    ser.write(b'left\n')
+                    ser.write(b'1\n')
                 else:
                     cv2.putText(imgcontours, "right", (x1+w1+10, y1+30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
-                    ser.write(b'right\n')
+                    ser.write(b'0\n')
                 cv2.putText(imgcontours, "area"+str(int(area)), (x1+w1+10, y1+10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
 
 
