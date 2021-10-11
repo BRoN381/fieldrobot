@@ -43,7 +43,7 @@ while True:
     kernel = np.ones((4,4))
     dilate = cv2.dilate(edge, kernel, 1)
     
-    getContours(dilate, imgcontous)
+    getContours(dilate, imgcontours)
 
     cv2.imshow('final', imgcontours)
     if cv2.waitKey(1) == ord('q'):
