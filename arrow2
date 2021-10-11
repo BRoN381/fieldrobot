@@ -1,0 +1,55 @@
+import cv2
+import numpy as np
+import serial
+
+COM_PORT = '/dev/ttyACM0'
+BAUD_RATES = 9600
+ser = serial.Serial(COM_PORT, BAUD_RATES)
+
+def getContours(img, imgcontours):
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    for i in contours:
+        area = cv2.contourArea(i)
+        if area > 1500:
+            arclen = cv2.arcLength(i, True)
+            approx = cv2.approxPolyDP(i, arclen*0.02, True)
+            if len(approx) == 7:
+                cv2.drawContours(imgcontours, i, -1,(153,204,0), 7)
+                x1, y1, w1, h1 = cv2.boundingRect(approx)
+                newapp = np.ravel(approx)
+                maximum = 0
+                secmaximum = 0
+                for j in range(0, len(newapp), 2):
+                    if newapp[j] > maximum:
+                        maximum = newapp[j]
+                    elif newapp[j] > secmaximum:
+                        secmaximum = newapp[j]
+                if abs(maximum - secmaximum) < w1/4:
+                    cv2.putText(imgcontours, "left", (x1+w1+10, y1+30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
+                else:
+                    cv2.putText(imgcontours, "right", (x1+w1+10, y1+30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
+                cv2.putText(imgcontours, "area"+str(int(area)), (x1+w1+10, y1+10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
+
+
+cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+while True:
+	try:
+		ret, frame = cap.read()
+		imgcontours = frame.copy()
+		grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		blur = cv2.GaussianBlur(grey, (5,5), 0)
+		edge = cv2.Canny(blur, 100, 255)
+		kernel = np.ones((4,4))
+		dilate = cv2.dilate(edge, kernel, 1)
+		'''getContours(dilate, imgcontours)'''
+		
+
+		cv2.imshow('dilate', dilate)
+    cv2.imshow('frame', frame)
+		if cv2.waitKey(1) == ord('q'):
+			break
+	except:
+		True
+
+cap.release()
+cv2.destroyAllWindows()
