@@ -34,7 +34,6 @@ def getContours(img, imgcontours):
 
 
 cap = cv2.VideoCapture(0)
-counter = 0
 while True:
     ret, frame = cap.read()
     imgcontours = frame.copy()
@@ -44,10 +43,7 @@ while True:
     kernel = np.ones((4,4))
     dilate = cv2.dilate(edge, kernel, 1)
     
-    if counter == 100:
-        getContours(dilate, imgcontours)
-        counter = 0
-    counter += 1
+    getContours(dilate, imgcontous)
 
     cv2.imshow('final', imgcontours)
     if cv2.waitKey(1) == ord('q'):
