@@ -31,7 +31,7 @@ def getContours(img, imgcontours):
                 cv2.putText(imgcontours, "area"+str(int(area)), (x1+w1+10, y1+10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,153), 2)
 
 
-cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0)
 while True:
 	ret, frame = cap.read()
 	imgcontours = frame.copy()
