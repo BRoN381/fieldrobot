@@ -51,7 +51,7 @@ while(1):
 
     #making mask for hsv range
     mask = cv2.inRange(hsv, hsv_low, hsv_high)
-    print (mask)
+    print (H_low, H_high, S_low, S_high, V_low, V_high)
     #masking HSV value selected color becomes black
     res = cv2.bitwise_and(frame, frame, mask=mask)
 
