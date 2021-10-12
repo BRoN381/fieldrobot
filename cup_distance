@@ -1,0 +1,56 @@
+import cv2
+import numpy as np
+import matplotlib
+import serial
+
+'''ser = serial.Serial('/dev/ttyACM0', 9600)'''
+cap = cv2.VideoCapture(0)
+while True: 
+	ret, frame = cap.read()
+	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	lower_bound = np.array([118, 38, 34])
+	upper_bound = np.array([177, 237, 172])
+	mask = cv2.inRange(hsv, lower_bound, upper_bound)
+	frame = cv2.bitwise_and(frame, frame, mask=mask)
+
+	height = frame.shape[0]
+	width = frame.shape[1]
+	leftbound = {'minmax': [0,0], 'coor': [0,0]}
+	rightbound = {'minmax': [0,0], 'coor': [0,0]}
+
+	for i in range(width):
+		pixel = 0
+		num = np.uint8(0)
+		for j in range(height//2):
+			if (frame[j][i][0] != num or frame[j][i][1] != num or frame[j][i][2] != num):
+				pixel += 1
+		frame = cv2.line(frame, (i, height), (i, height-pixel), (255, 255, 0), 1)
+		if i < width//2:
+			if pixel > 10:
+				if leftbound['minmax'][0] != 0:
+					leftbound['minmax'][0] = pixel
+					leftbound['coor'][0] = i
+				if leftbound['minmax'][1] < pixel:
+					leftbound['minmax'][1] = pixel
+					leftbound['coor'][1] = i
+		else:
+			if pixel > 10:
+				if rightbound['minmax'][0] != 0:
+					rightbound['minmax'][0] = pixel
+					rightbound['coor'][0] = i
+				if rightbound['minmax'][1] < pixel:
+					rightbound['minmax'][1] = pixel
+					rightbound['coor'][1] = i
+		coordiff = [leftbound['coor'][1]-leftbound['coor'][0], rightbound['coor'][1]-rightbound['coor'][0]]
+		if coordiff[0] > coordiff[1]:
+			cv2.putText(frame, "turn right", (10, height-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 150), 2)
+		else:
+			cv2.putText(frame, "turn left", (10, height-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 150), 2)
+
+	cv2.imshow('result', frame)
+
+	if cv2.waitKey(1) == ord('q'):
+		break
+
+cap.release()
+cv2.destroyAllWindows()
