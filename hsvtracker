@@ -41,7 +41,7 @@ cap = cv2.VideoCapture(0)
 
 while(1):
     #read source image
-    ret, frame = caap.read()
+    ret, frame = cap.read()
     #convert sourece image to HSC color mode
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
