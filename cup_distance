@@ -5,7 +5,7 @@ import time
 
 ser = serial.Serial('/dev/ttyACM0', 9600)
 cap = cv2.VideoCapture(0)
-counter = 0
+counter, leftdiff, rightdiff = 0
 pixelcount = []
 for i in range(640):
 	pixelcount.append(0)
@@ -27,7 +27,7 @@ while True:
 		height = frame.shape[0]
 		width = frame.shape[1]
 		boundary = [0, 0, 0, 0]
-		firstcoor, output, leftdiff, rightdiff = 0
+		firstcoor, output = 0
 		for i in range(width):
 			pixel = 0
 			pixelcount[i] = 0
