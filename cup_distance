@@ -13,7 +13,7 @@ for i in range(640):
 	pixelcount.append(0)
 motorspeed = []
 for i in range(20):
-	motorspeed.append('mid\n'.encode('utf-8'))
+	motorspeed.append('mid\n')
 boundary = [0, 0, 0, 0]
 while True: 
 	ret, frame = cap.read()
