@@ -44,7 +44,7 @@ def getContours(imgcontours):
                     return 2
     return 0
 
-def cupdetect(frame, counter):
+def cupdetect(frame):
     #mask for grass
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower_bound = np.array([0, 0, 32])
@@ -52,52 +52,51 @@ def cupdetect(frame, counter):
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     frame = cv2.bitwise_and(frame, frame, mask=mask)
     #check pixel density every 10 pic
-    if counter == 10: 
-        height = frame.shape[0]
-        width = frame.shape[1]
-        firstcoor = 0
-        output = 0
-        for i in range(width):
-            pixel = 0
-            pixelcount[i] = 0
-            num = np.uint8(0)
-            for j in range(height//2):
-                if (frame[j][i][0] != num or frame[j][i][1] != num or frame[j][i][2] != num):
-                    pixel += 1
-            if pixel > 25:
-                pixelcount[i] = pixel
-            #clear if density too small
-                if firstcoor == 0:
-                    firstcoor = i
-            elif firstcoor != 0:
-                if i - firstcoor < 15:
-                    for j in range(firstcoor, i):
-                        pixelcount[j] = 0
-                firstcoor = 0
-            #find range for left and right
-            if i < width//2:
-                if pixelcount[i] != 0:
-                    if boundary[0] == 0:
-                        boundary[0] = i
-                    else:
-                        boundary[1] = i
-            else:
-                if pixelcount[i] != 0:
-                    if boundary[2] == 0:
-                        boundary[2] = i
-                    else:
-                        boundary[3] = i
-        leftdiff = boundary[1] - boundary[0]
-        rightdiff = boundary[3] - boundary[2]
-        if abs(leftdiff-rightdiff) > 70:
-            if leftdiff-rightdiff>0:
-                output = '3'
-            else:
-                output = '1'
+    height = frame.shape[0]
+    width = frame.shape[1]
+    firstcoor = 0
+    output = 0
+    for i in range(width):
+        pixel = 0
+        pixelcount[i] = 0
+        num = np.uint8(0)
+        for j in range(height//2):
+            if (frame[j][i][0] != num or frame[j][i][1] != num or frame[j][i][2] != num):
+                pixel += 1
+        if pixel > 25:
+            pixelcount[i] = pixel
+        #clear if density too small
+            if firstcoor == 0:
+                firstcoor = i
+        elif firstcoor != 0:
+            if i - firstcoor < 15:
+                for j in range(firstcoor, i):
+                    pixelcount[j] = 0
+            firstcoor = 0
+        #find range for left and right
+        if i < width//2:
+            if pixelcount[i] != 0:
+                if boundary[0] == 0:
+                    boundary[0] = i
+                else:
+                    boundary[1] = i
         else:
-            output = '2'
-        motorspeed.append(output)
-        print(output)
+            if pixelcount[i] != 0:
+                if boundary[2] == 0:
+                    boundary[2] = i
+                else:
+                    boundary[3] = i
+    leftdiff = boundary[1] - boundary[0]
+    rightdiff = boundary[3] - boundary[2]
+    if abs(leftdiff-rightdiff) > 70:
+        if leftdiff-rightdiff>0:
+            output = '3'
+        else:
+            output = '1'
+    else:
+        output = '2'
+    motorspeed.append(output)
+    print(output)
     #show density
     for i in range(640):
         if pixelcount[i] != 0:
@@ -116,7 +115,7 @@ while True:
     ret, frame = cap.read()
     imgcontours = frame.copy()
 
-    cupdetect(frame, counter)
+    cupdetect(frame)
     arrowresult = getContours(imgcontours)
     arrowcount.append(arrowresult)
     arrowcount.pop(0)
@@ -128,13 +127,12 @@ while True:
             arrowstr = '2'
     else:
         arrowstr = '0'
-    print('arrow:', arrowcount)
 
-    if counter == 10:
-        serprint = (motorspeed.pop(0)+arrowstr+'\n')
-        ser.write(serprint.encode('utf-8'))
-        print('serial write:', serprint)
-        counter = 0
+    print('arrow:', arrowcount)
+    serprint = (motorspeed.pop(0)+arrowstr+'\n')
+    ser.write(serprint.encode('utf-8'))
+    print('serial write:', serprint)
+
     frame = cv2.line(frame, (boundary[0], 480), (boundary[0], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[1], 480), (boundary[1], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[2], 480), (boundary[2], 0), (0, 0, 255), 1)
