@@ -138,7 +138,6 @@ while True:
         counter = 0
 
     cv2.imshow('arrow', imgcontours)
-    cv2.imshow('cup', frame)
     counter += 1
 
     if cv2.waitKey(1) == ord('q'):
