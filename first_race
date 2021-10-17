@@ -102,10 +102,7 @@ def cupdetect(frame, counter):
     for i in range(640):
         if pixelcount[i] != 0:
             frame = cv2.line(frame, (i, 480), (i, 480-pixelcount[i]), (255, 255, 0), 1)
-    frame = cv2.line(frame, (boundary[0], 480), (boundary[0], 0), (0, 0, 255), 1)
-    frame = cv2.line(frame, (boundary[1], 480), (boundary[1], 0), (0, 0, 255), 1)
-    frame = cv2.line(frame, (boundary[2], 480), (boundary[2], 0), (0, 0, 255), 1)
-    frame = cv2.line(frame, (boundary[3], 480), (boundary[3], 0), (0, 0, 255), 1)
+
     if boundary[1] - boundary[0] > boundary[3] - boundary[2]:
         cv2.putText(frame, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
     else:
@@ -131,13 +128,19 @@ while True:
             arrowstr = '2'
     else:
         arrowstr = '0'
+    print('arrow:', arrowcount)
 
     if counter == 10:
-        serprint = (motorspeed.pop(0)+arrowstr+'\n').encode('utf-8')
-        ser.write(serprint)
+        serprint = (motorspeed.pop(0)+arrowstr+'\n')
+        ser.write(serprint.encode('utf-8'))
+        print('serial write:', serprint)
         counter = 0
-
+    frame = cv2.line(frame, (boundary[0], 480), (boundary[0], 0), (0, 0, 255), 1)
+    frame = cv2.line(frame, (boundary[1], 480), (boundary[1], 0), (0, 0, 255), 1)
+    frame = cv2.line(frame, (boundary[2], 480), (boundary[2], 0), (0, 0, 255), 1)
+    frame = cv2.line(frame, (boundary[3], 480), (boundary[3], 0), (0, 0, 255), 1)
     cv2.imshow('arrow', imgcontours)
+    cv2.imshow('cup', frame)
     counter += 1
 
     if cv2.waitKey(1) == ord('q'):
