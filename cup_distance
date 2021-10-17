@@ -12,7 +12,7 @@ pixelcount = []
 for i in range(640):
 	pixelcount.append(0)
 motorspeed = []
-for i in range(20):
+for i in range(5):
 	motorspeed.append('mid\n')
 boundary = [0, 0, 0, 0]
 while True: 
@@ -86,7 +86,6 @@ while True:
 		cv2.putText(frame, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
 	else:
 		cv2.putText(frame, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
-	print('left1:', boundary[0], 'left2:', boundary[1], 'right1:', boundary[2], 'right2:', boundary[3])
 	print('leftdiff:', leftdiff, 'rightdiff:', rightdiff)
 	print(motorspeed)
 	cv2.imshow('result', frame)
