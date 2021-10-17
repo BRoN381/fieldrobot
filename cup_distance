@@ -12,7 +12,7 @@ pixelcount = []
 for i in range(640):
 	pixelcount.append(0)
 motorspeed = []
-for i in range(5):
+for i in range(3):
 	motorspeed.append('mid\n')
 boundary = [0, 0, 0, 0]
 while True: 
