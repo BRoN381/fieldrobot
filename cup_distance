@@ -62,12 +62,13 @@ while True:
 		rightdiff = boundary[3] - boundary[2]
 		if abs(leftdiff-rightdiff) > 70:
 			if leftdiff-rightdiff>0:
-				output = b'080120\n'
+				output = '080120\n'
 			else:
-				output = b'120080\n'
+				output = '120080\n'
 		else:
-			output = b'080080\n'
-	ser.write(motorspeed.pop(0))
+			output = '080080\n'
+	serprint = motorspeed.pop(0).encode('utf-8')
+	ser.write(serprint)
 	motorspeed.append(output)
 	counter += 1
 	#show density
