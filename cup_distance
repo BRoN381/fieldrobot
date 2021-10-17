@@ -1,30 +1,33 @@
 import cv2
 import numpy as np
 import serial
+import time
 
-'''ser = serial.Serial('/dev/ttyACM0', 9600)'''
+ser = serial.Serial('/dev/ttyACM0', 9600)
 cap = cv2.VideoCapture(0)
 counter = 0
 pixelcount = []
 for i in range(640):
 	pixelcount.append(0)
+motorspeed = []
+for i in range(20):
+	motorspeed.append('080080')
 boundary = [0, 0, 0, 0]
-
 while True: 
 	ret, frame = cap.read()
 	#mask for grass
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-	lower_bound = np.array([115, 51, 30])
-	upper_bound = np.array([175, 208, 127])
+	lower_bound = np.array([0, 0, 32])
+	upper_bound = np.array([179, 146, 127])
 	mask = cv2.inRange(hsv, lower_bound, upper_bound)
 	frame = cv2.bitwise_and(frame, frame, mask=mask)
-	#check pixel density every 100 pic
+	#check pixel density every 10 pic
 	if counter == 10: 
 		counter = 0
 		height = frame.shape[0]
 		width = frame.shape[1]
-		firstcoor = 0
 		boundary = [0, 0, 0, 0]
+		firstcoor, output, leftdiff, rightdiff = 0
 		for i in range(width):
 			pixel = 0
 			pixelcount[i] = 0
@@ -57,8 +60,13 @@ while True:
 						boundary[3] = i
 		leftdiff = boundary[1] - boundary[0]
 		rightdiff = boundary[3] - boundary[2]
-		output = leftdiff*1000 + rightdiff
-		ser.write(output, '\n')
+		if abs(leftdiff-rightdiff) > 70:
+			if leftdiff-rightdiff>0:
+				output = '080120'
+			else:
+				output = '120080'
+	ser.write(motorspeed.pop(0),'\n')
+	motorspeed.append(output)
 	counter += 1
 	#show density
 	for i in range(640):
@@ -73,6 +81,7 @@ while True:
 	else:
 		cv2.putText(frame, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
 	print('left1:', boundary[0], 'left2:', boundary[1], 'right1:', boundary[2], 'right2:', boundary[3])
+	print('leftdiff:', leftdiff, 'rightdiff:', rightdiff)
 	cv2.imshow('result', frame)
 	if cv2.waitKey(1) == ord('q'):
 		break
