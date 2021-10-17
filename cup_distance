@@ -62,11 +62,11 @@ while True:
 		rightdiff = boundary[3] - boundary[2]
 		if abs(leftdiff-rightdiff) > 70:
 			if leftdiff-rightdiff>0:
-				output = '080120\n'
+				output = b'080120\n'
 			else:
-				output = '120080\n'
+				output = b'120080\n'
 		else:
-			output = '080080\n'
+			output = b'080080\n'
 	ser.write(motorspeed.pop(0))
 	motorspeed.append(output)
 	counter += 1
