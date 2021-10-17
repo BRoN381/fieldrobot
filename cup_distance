@@ -67,9 +67,9 @@ while True:
 				output = '120080\n'
 		else:
 			output = '080080\n'
-	serprint = motorspeed.pop(0).encode('utf-8')
-	ser.write(serprint)
-	motorspeed.append(output)
+		serprint = motorspeed.pop(0).encode('utf-8')
+		ser.write(serprint)
+		motorspeed.append(output)
 	counter += 1
 	#show density
 	for i in range(640):
