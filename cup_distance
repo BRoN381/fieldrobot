@@ -65,11 +65,11 @@ while True:
 		rightdiff = boundary[3] - boundary[2]
 		if abs(leftdiff-rightdiff) > 70:
 			if leftdiff-rightdiff>0:
-				output = '080120\n'
+				output = 'right\n'
 			else:
-				output = '120080\n'
+				output = 'left\n'
 		else:
-			output = '080080\n'
+			output = 'mid\n'
 		serprint = motorspeed.pop(0).encode('utf-8')
 		ser.write(serprint)
 		motorspeed.append(output)
