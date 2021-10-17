@@ -11,9 +11,7 @@ rightdiff = 0
 pixelcount = []
 for i in range(640):
 	pixelcount.append(0)
-motorspeed = []
-for i in range(3):
-	motorspeed.append('mid\n')
+motorspeed = ['mid\n']
 boundary = [0, 0, 0, 0]
 while True: 
 	ret, frame = cap.read()
