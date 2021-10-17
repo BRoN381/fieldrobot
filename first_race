@@ -4,8 +4,8 @@ import serial
 
 ser = serial.Serial('/dev/ttyACM0', 9600)
 
-leftdiff = 0
-rightdiff = 0
+global leftdiff
+global rightdiff
 pixelcount = []
 for i in range(640):
     pixelcount.append(0)
@@ -53,7 +53,6 @@ def cupdetect(frame, counter):
     frame = cv2.bitwise_and(frame, frame, mask=mask)
     #check pixel density every 10 pic
     if counter == 10: 
-        counter = 0
         height = frame.shape[0]
         width = frame.shape[1]
         firstcoor = 0
@@ -98,7 +97,7 @@ def cupdetect(frame, counter):
         else:
             output = '2'
         motorspeed.append(output)
-    counter += 1
+        print(output)
     #show density
     for i in range(640):
         if pixelcount[i] != 0:
@@ -107,11 +106,11 @@ def cupdetect(frame, counter):
     frame = cv2.line(frame, (boundary[1], 480), (boundary[1], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[2], 480), (boundary[2], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[3], 480), (boundary[3], 0), (0, 0, 255), 1)
-    if leftdiff > rightdiff:
+    if boundary[1] - boundary[0] > boundary[3] - boundary[2]:
         cv2.putText(frame, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
     else:
         cv2.putText(frame, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
-    print('leftdiff:', leftdiff, 'rightdiff:', rightdiff)
+    print('leftdiff:', boundary[1] - boundary[0], 'rightdiff:', boundary[3] - boundary[2])
     print(motorspeed)
 
 cap = cv2.VideoCapture(0)
@@ -121,7 +120,6 @@ while True:
     imgcontours = frame.copy()
 
     cupdetect(frame, counter)
-    counter += 1
     arrowresult = getContours(imgcontours)
     arrowcount.append(arrowresult)
     arrowcount.pop(0)
@@ -134,11 +132,14 @@ while True:
     else:
         arrowstr = '0'
 
-    serprint = (motorspeed.pop(0)+arrowstr+'\n').encode('utf-8')
-    ser.write(serprint)
+    if counter == 10:
+        serprint = (motorspeed.pop(0)+arrowstr+'\n').encode('utf-8')
+        ser.write(serprint)
+        counter = 0
 
     cv2.imshow('arrow', imgcontours)
     cv2.imshow('cup', frame)
+    counter += 1
 
     if cv2.waitKey(1) == ord('q'):
         break
