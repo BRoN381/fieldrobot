@@ -126,12 +126,12 @@ while True:
     arrowcount.append(arrowresult)
     arrowcount.pop(0)
     if arrowresult == 1:
-        if arrowcount.count(1) == 3:
+        if arrowcount.count(1) > 1:
             arrowstr = '1'
         else:
             arrowstr = '0'
     elif arrowresult == 2:
-        if arrowcount.count(2) == 3:
+        if arrowcount.count(2) > 1:
             arrowstr = '2'
         else:
             arrowstr = '0'
