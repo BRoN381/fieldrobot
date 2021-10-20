@@ -51,36 +51,38 @@ def cupdetect(frame):
 cap = cv2.VideoCapture(2)
 counter = 0
 while True:
-    ret, frame = cap.read()
-    imgcontours = frame.copy()
+    try:
+        ret, frame = cap.read()
+        imgcontours = frame.copy()
 
-    cupdetect(frame)
-    arrowresult = getContours(imgcontours)
-    arrowcount.append(arrowresult)
-    arrowcount.pop(0)
-    contiarrow = 2
-    if arrowresult == 1:
-        if arrowcount.count(1) > contiarrow:
-            arrowstr = '1'
-            cv2.putText(imgcontours, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
+        cupdetect(frame)
+        arrowresult = getContours(imgcontours)
+        arrowcount.append(arrowresult)
+        arrowcount.pop(0)
+        contiarrow = 2
+        if arrowresult == 1:
+            if arrowcount.count(1) > contiarrow:
+                arrowstr = '1'
+                cv2.putText(imgcontours, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
+            else:
+                arrowstr = '0'
+        elif arrowresult == 2:
+            if arrowcount.count(2) > contiarrow:
+                arrowstr = '2'
+                cv2.putText(imgcontours, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
+            else:
+                arrowstr = '0'
         else:
             arrowstr = '0'
-    elif arrowresult == 2:
-        if arrowcount.count(2) > contiarrow:
-            arrowstr = '2'
-            cv2.putText(imgcontours, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
-        else:
-            arrowstr = '0'
-    else:
-        arrowstr = '0'
 
-    print('arrow:', arrowcount)
-    serprint = (motorspeed.pop(0)+arrowstr+'\n')
-    ser.write(serprint.encode('utf-8'))
-    print('serial write:', serprint)
-    
-    if cv2.waitKey(1) == ord('q'):
+        print('arrow:', arrowcount)
+        serprint = (motorspeed.pop(0)+arrowstr+'\n')
+        ser.write(serprint.encode('utf-8'))
+        print('serial write:', serprint)
+
+        if cv2.waitKey(1) == ord('q'):
+            break
+    except KeyboardInterrupt():
         break
-
 cap.release()
 cv2.destroyAllWindows()
