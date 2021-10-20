@@ -47,21 +47,23 @@ def getContours(imgcontours):
 def cupdetect(frame):
     #mask for grass
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    lower_bound = np.array([0, 0, 32])
-    upper_bound = np.array([179, 146, 127])
+    lower_bound = np.array([122, 45, 0])
+    upper_bound = np.array([179, 255, 255])
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     frame = cv2.bitwise_and(frame, frame, mask=mask)
-    #check pixel density every 10 pic
     height = frame.shape[0]
     width = frame.shape[1]
     firstcoor = 0
     output = 0
+    upbound = 120
+    lowbound = 280
     boundary = [0, 0, 0, 0]
     for i in range(width):
         pixel = 0
         pixelcount[i] = 0
         num = np.uint8(0)
-        for j in range(height//2):
+        #chop the image
+        for j in range(upbound, lowbound):
             if (frame[j][i][0] != num or frame[j][i][1] != num or frame[j][i][2] != num):
                 pixel += 1
         if pixel > 25:
@@ -108,14 +110,18 @@ def cupdetect(frame):
     frame = cv2.line(frame, (boundary[1], 480), (boundary[1], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[2], 480), (boundary[2], 0), (0, 0, 255), 1)
     frame = cv2.line(frame, (boundary[3], 480), (boundary[3], 0), (0, 0, 255), 1)
-    if leftdiff > rightdiff:
+    frame = cv2.line(frame, (0, upbound), (640, upbound), (0, 0, 255), 1)
+    frame = cv2.line(frame, (0, lowbound), (640, lowbound), (0, 0, 255), 1)
+    if abs(leftdiff-rightdiff) < 70:
+        cv2.putText(frame, "go straight", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
+    elif leftdiff > rightdiff:
         cv2.putText(frame, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
     else:
         cv2.putText(frame, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
     print(motorspeed)
     cv2.imshow('cup', frame)
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 counter = 0
 while True:
     ret, frame = cap.read()
@@ -125,14 +131,17 @@ while True:
     arrowresult = getContours(imgcontours)
     arrowcount.append(arrowresult)
     arrowcount.pop(0)
+    contiarrow = 2
     if arrowresult == 1:
-        if arrowcount.count(1) == 1:
+        if arrowcount.count(1) > contiarrow:
             arrowstr = '1'
+            cv2.putText(imgcontours, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
         else:
             arrowstr = '0'
     elif arrowresult == 2:
-        if arrowcount.count(2) == 1:
+        if arrowcount.count(2) > contiarrow:
             arrowstr = '2'
+            cv2.putText(imgcontours, "turn right", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
         else:
             arrowstr = '0'
     else:
