@@ -119,7 +119,6 @@ def cupdetect(frame):
     else:
         cv2.putText(frame, "turn left", (10, 480-10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 255, 255), 2)
     print(motorspeed)
-    cv2.imshow('cup', frame)
 
 cap = cv2.VideoCapture(2)
 counter = 0
@@ -153,7 +152,6 @@ while True:
         ser.write(serprint.encode('utf-8'))
         print('serial write:', serprint)
 
-        cv2.imshow('arrow', imgcontours)
         
         if cv2.waitKey(1) == ord('q'):
             break
