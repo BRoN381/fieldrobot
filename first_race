@@ -47,8 +47,8 @@ def getContours(imgcontours):
 def cupdetect(frame):
     #mask for grass
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    lower_bound = np.array([0, 103, 152])
-    upper_bound = np.array([179, 225, 255])
+    lower_bound = np.array([0, 115, 190])
+    upper_bound = np.array([179, 229, 255])
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     frame = cv2.bitwise_and(frame, frame, mask=mask)
     height = frame.shape[0]
